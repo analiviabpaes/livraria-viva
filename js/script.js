@@ -1,21 +1,25 @@
-const $ = id => document.getElementById(id);
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
-const reais = v => "R$ " + Number(v).toFixed(2).replace(".", ",");
-const slug = t => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+// Endereço da API Flask. Local: vazio (o próprio Flask serve o site).
+// No GitHub Pages: troque SEU_USUARIO pelo seu usuário do PythonAnywhere.
+let API = location.hostname.endsWith("github.io") ? "https://SEU_USUARIO.pythonanywhere.com" : "";
+
+let $ = id => document.getElementById(id);
+let esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+let reais = v => "R$ " + Number(v).toFixed(2).replace(".", ",");
+let slug = t => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
   .replace(/ de /g, " ").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-const botoes = (id, extra = "") => `<div class="acoes-td" style="justify-content: center;">${extra}
+let botoes = (id, extra = "") => `<div class="acoes-td" style="justify-content: center;">${extra}
   <button type="button" class="botao botao-warning" style="padding: 4px 10px; font-size: 0.85rem;" data-acao="editar" data-id="${id}">Editar</button>
   <button type="button" class="botao botao-danger" style="padding: 4px 10px; font-size: 0.85rem;" data-acao="excluir" data-id="${id}">Excluir</button></div>`;
 
 // ---------- comunicação com a API Flask ----------
 async function api(url, metodo = "GET", dados) {
-  const resposta = await fetch(url, {
+  let resposta = await fetch(API + url, {
     method: metodo,
     headers: {"Content-Type": "application/json"},
     body: dados && JSON.stringify(dados)
   });
   if (resposta.status === 204) return null;
-  const json = await resposta.json();
+  let json = await resposta.json();
   if (!resposta.ok) throw new Error(json.erro || "Erro na requisição");
   return json;
 }
@@ -39,11 +43,11 @@ async function excluir(recurso, id, recarregar) {
 // ---------- formulário que cria (POST) ou edita (PUT) ----------
 function crud(recurso, form, recarregar, somenteCriacao = []) {
   let editando = null;
-  const salvar = form.querySelector("[type=submit]");
-  const rotulo = salvar.textContent;
-  const cancelar = form.querySelector(".cancelar");
+  let salvar = form.querySelector("[type=submit]");
+  let rotulo = salvar.textContent;
+  let cancelar = form.querySelector(".cancelar");
 
-  const limpar = () => {
+  let limpar = () => {
     form.reset();
     editando = null;
     salvar.textContent = rotulo;
@@ -54,7 +58,7 @@ function crud(recurso, form, recarregar, somenteCriacao = []) {
 
   form.onsubmit = async e => {
     e.preventDefault();
-    const dados = Object.fromEntries(new FormData(form));
+    let dados = Object.fromEntries(new FormData(form));
     try {
       await (editando ? api(`/${recurso}/${editando}`, "PUT", dados) : api(`/${recurso}`, "POST", dados));
       msg(editando ? "Atualizado com sucesso!" : "Cadastrado com sucesso!");
@@ -79,9 +83,9 @@ function crud(recurso, form, recarregar, somenteCriacao = []) {
 
 function ligarAcoes(lista, recurso, obter, controle, recarregar) {
   lista.onclick = e => {
-    const botao = e.target.closest("button[data-acao]");
+    let botao = e.target.closest("button[data-acao]");
     if (!botao) return;
-    const id = Number(botao.dataset.id);
+    let id = Number(botao.dataset.id);
     if (botao.dataset.acao === "editar") controle.editar(obter(id), id);
     else excluir(recurso, id, recarregar);
   };
@@ -90,7 +94,7 @@ function ligarAcoes(lista, recurso, obter, controle, recarregar) {
 // ---------- categorias e usuários (tabela + formulário) ----------
 function paginaTabela(recurso, chave, linha, somenteCriacao) {
   let itens = [];
-  const controle = crud(recurso, $("form"), carregar, somenteCriacao);
+  let controle = crud(recurso, $("form"), carregar, somenteCriacao);
   async function carregar() {
     itens = await api("/" + recurso);
     $("lista").innerHTML = itens.map(i => `<tr>${linha(i)}<td>${botoes(i[chave])}</td></tr>`).join("");
@@ -102,11 +106,11 @@ function paginaTabela(recurso, chave, linha, somenteCriacao) {
 // ---------- livros (catálogo + formulário) ----------
 function paginaLivros() {
   let livros = [];
-  const controle = crud("livros", $("form"), carregar);
+  let controle = crud("livros", $("form"), carregar);
   async function carregar() {
-    const [lista, categorias] = await Promise.all([api("/livros"), api("/categorias")]);
+    let [lista, categorias] = await Promise.all([api("/livros"), api("/categorias")]);
     livros = lista;
-    const nomes = Object.fromEntries(categorias.map(c => [c.id_categoria, c.nome]));
+    let nomes = Object.fromEntries(categorias.map(c => [c.id_categoria, c.nome]));
     $("id_categoria").innerHTML = categorias.map(c => `<option value="${c.id_categoria}">${esc(c.nome)}</option>`).join("");
     $("lista").innerHTML = livros.map(l => `
       <figure class="livro">
@@ -118,7 +122,7 @@ function paginaLivros() {
   }
   ligarAcoes($("lista"), "livros", id => livros.find(l => l.id_livro === id), controle, carregar);
   $("busca").oninput = e => document.querySelectorAll("#lista .livro").forEach(f => {
-    const titulo = f.querySelector("strong").textContent.toLowerCase();
+    let titulo = f.querySelector("strong").textContent.toLowerCase();
     f.classList.toggle("escondido", !titulo.includes(e.target.value.toLowerCase()));
   });
   carregar().catch(e => msg(e.message, false));
@@ -126,11 +130,11 @@ function paginaLivros() {
 
 // ---------- pedidos ----------
 function paginaPedidos() {
-  const STATUS = ["pendente", "pago", "enviado", "cancelado"];
+  let STATUS = ["pendente", "pago", "enviado", "cancelado"];
   let livros = [], usuarios = [];
 
-  const novaLinha = () => {
-    const d = document.createElement("div");
+  let novaLinha = () => {
+    let d = document.createElement("div");
     d.className = "linha";
     d.style.cssText = "display: flex; gap: 8px;";
     d.innerHTML = `<select style="flex: 1;">${livros.map(l => `<option value="${l.id_livro}">${esc(l.titulo)} - ${reais(l.preco)}</option>`).join("")}</select>
@@ -143,8 +147,8 @@ function paginaPedidos() {
     $("usuario").innerHTML = usuarios.map(u => `<option value="${u.id_usuario}">${esc(u.nome)}</option>`).join("");
     $("itens").innerHTML = "";
     novaLinha();
-    const pedidos = await api("/pedidos");
-    const nome = id => (usuarios.find(u => u.id_usuario === id) || {}).nome;
+    let pedidos = await api("/pedidos");
+    let nome = id => (usuarios.find(u => u.id_usuario === id) || {}).nome;
     $("lista").innerHTML = pedidos.map(p => `
       <tr>
         <td>${p.id_pedido}</td>
@@ -163,7 +167,7 @@ function paginaPedidos() {
 
   $("form").onsubmit = async e => {
     e.preventDefault();
-    const itens = [...document.querySelectorAll("#itens .linha")].map(d => ({
+    let itens = [...document.querySelectorAll("#itens .linha")].map(d => ({
       id_livro: Number(d.children[0].value), quantidade: Number(d.children[1].value)
     }));
     try {
@@ -185,12 +189,12 @@ function paginaPedidos() {
   };
 
   $("lista").onclick = async e => {
-    const botao = e.target.closest("button[data-acao]");
+    let botao = e.target.closest("button[data-acao]");
     if (!botao) return;
-    const id = Number(botao.dataset.id);
+    let id = Number(botao.dataset.id);
     if (botao.dataset.acao === "excluir") return excluir("pedidos", id, carregar);
-    const pedido = await api("/pedidos/" + id);
-    const titulo = i => (livros.find(l => l.id_livro === i) || {}).titulo;
+    let pedido = await api("/pedidos/" + id);
+    let titulo = i => (livros.find(l => l.id_livro === i) || {}).titulo;
     $("detalhe").innerHTML = `<h4>Itens do pedido ${id}</h4>` + pedido.itens.map(i =>
       `<p>${esc(titulo(i.id_livro))} - ${i.quantidade} x ${reais(i.preco_unitario)}</p>`).join("");
   };
@@ -199,7 +203,7 @@ function paginaPedidos() {
 }
 
 // ---------- qual página está aberta ----------
-const paginas = {
+let paginas = {
   livros: paginaLivros,
   pedidos: paginaPedidos,
   categorias: () => paginaTabela("categorias", "id_categoria",
@@ -207,5 +211,5 @@ const paginas = {
   usuarios: () => paginaTabela("usuarios", "id_usuario",
     u => `<td>${u.id_usuario}</td><td>${esc(u.nome)}</td><td>${esc(u.email)}</td><td>${esc(u.telefone)}</td>`, ["senha"])
 };
-const pagina = document.body.dataset.pagina;
+let pagina = document.body.dataset.pagina;
 if (paginas[pagina]) paginas[pagina]();

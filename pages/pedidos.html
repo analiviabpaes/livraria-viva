@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Livraria Viva | Pedidos</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-pagina="pedidos">
+
+  <header class="cabecalho">
+    <h1 class="logo">Livraria Viva</h1>
+  </header>
+
+  <nav class="menu">
+    <a href="../index.html">Home</a>
+    <a href="livros.html">Livros</a>
+    <a href="categorias.html">Categorias</a>
+    <a href="usuarios.html">Usuários</a>
+    <a href="pedidos.html" class="ativo">Pedidos</a>
+  </nav>
+
+  <main>
+    <p id="msg" style="font-weight: bold; margin: 16px 0;"></p>
+
+    <section class="formulario">
+      <h3>Novo Pedido</h3>
+      <form id="form">
+        <label for="usuario">Usuário:</label>
+        <select id="usuario" required></select>
+
+        <label>Livros:</label>
+        <div id="itens"></div>
+        <button type="button" id="add-item" class="botao">Adicionar livro</button>
+
+        <button type="submit" class="botao">Fazer pedido</button>
+      </form>
+    </section>
+
+    <section style="margin-top: 30px;">
+      <h3>Pedidos</h3>
+      <table class="tabela-dados">
+        <thead><tr><th>ID</th><th>Usuário</th><th>Data</th><th>Total</th><th>Status</th><th>Ações</th></tr></thead>
+        <tbody id="lista"></tbody>
+      </table>
+      <div id="detalhe" style="margin-top: 16px;"></div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <p>&copy; 2026 Livraria Viva — Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="../js/script.js"></script>
+</body>
+</html>

@@ -14,4 +14,14 @@ INSERT INTO livro (titulo, autor, preco, estoque, id_categoria) VALUES
 ('Cartas ao Pai', 'Franz Kafka', 29.90, 10, 2),
 ('Memórias Póstumas de Brás Cubas', 'Machado de Assis', 32.90, 10, 2),
 ('O Sol é para Todos', 'Harper Lee', 49.90, 10, 2),
-('Noites Brancas', 'Fiódor Dostoiévski', 27.90, 10, 2);
+('Noites Brancas', 'Fiódor Dostoiévski', 27.90, 10, 2),
+('Orgulho e Preconceito', 'Jane Austen', 34.90, 10, 2),
+('Dom Casmurro', 'Machado de Assis', 27.90, 10, 2),
+('O Pequeno Príncipe', 'Antoine de Saint-Exupéry', 24.90, 10, 3),
+('A Ilha do Tesouro', 'Robert Louis Stevenson', 31.90, 10, 3),
+('Viagem ao Centro da Terra', 'Júlio Verne', 29.90, 10, 3),
+('Drácula', 'Bram Stoker', 39.90, 10, 4),
+('O Silêncio dos Inocentes', 'Thomas Harris', 41.90, 10, 4),
+('O Código Da Vinci', 'Dan Brown', 44.90, 10, 4),
+('É Assim que Acaba', 'Colleen Hoover', 42.90, 10, 1),
+('Para Todos os Garotos que Já Amei', 'Jenny Han', 38.90, 10, 1);

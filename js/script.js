@@ -114,7 +114,7 @@ function paginaLivros() {
     $("id_categoria").innerHTML = categorias.map(c => `<option value="${c.id_categoria}">${esc(c.nome)}</option>`).join("");
     $("lista").innerHTML = livros.map(l => `
       <figure class="livro">
-        <img src="../img/livros/${slug(l.titulo)}.webp" alt="${esc(l.titulo)}" onerror="this.remove()">
+        <img src="../img/livros/${slug(l.titulo)}.webp" alt="${esc(l.titulo)}" onerror="if (this.src.endsWith('.webp')) this.src = this.src.replace('.webp', '.jpg'); else this.remove()">
         <figcaption><strong>${esc(l.titulo)}</strong><br><span>${esc(l.autor)} | ${esc(nomes[l.id_categoria])}</span></figcaption>
         <div class="preco">${reais(l.preco)}</div>
         ${botoes(l.id_livro)}
